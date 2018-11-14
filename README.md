@@ -1,10 +1,10 @@
 # YouTube™双字幕
 
-> 击一下即可开启中英双字幕,适用于YouTube™
+> 点击一下即可开启中英双字幕,适用于YouTube™
 
 # 安装
 
-> `(需要科学上网)`使用Chrome浏览器打开 [Chrome网上应用商店](https://chrome.google.com/webstore/category/extensions)搜索`YouTube™双字幕`进行安装
+> `(需要科学上网)`使用Chrome浏览器打开 [Chrome网上应用商店](https://chrome.google.com/webstore/detail/youtube%E5%8F%8C%E5%AD%97%E5%B9%95/pinbfcanggagdlikncmljamikccpkkon?hl=zh-CN)，点击`添加到Chrome`
 
 # 实现原理
 
