@@ -1,0 +1,23 @@
+{
+    "name":"YouTube™双字幕",
+    "manifest_version":2,
+    "version":"1.0",
+    "description":"点击一下即可开启中英双字幕,适用于YouTube™",
+    "author":"Dengrc",
+    "permissions":[
+        "notifications",
+        "tabs",
+        "storage",
+        "*://www.youtube.com/*"
+    ],
+    "icons":{
+        "128":"src/images/icon.png"
+    },
+    "browser_action":{
+        "default_title":"YouTube™双字幕"
+    },
+    "background":{
+        "scripts":["src/js/background.js"]
+    },
+    "web_accessible_resources":["src/js/injected.js"]
+}
