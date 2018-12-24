@@ -1,5 +1,5 @@
 xhook.after(function (request, response) {
-    if (request.url.includes('/api/timedtext') && !request.url.includes('tlang')) {
+    if (request.url.includes('/api/timedtext') && !request.url.includes('&tlang=')) {
         let xhr = new XMLHttpRequest();
         xhr.open('GET', `${request.url}&tlang=zh-Hans`, false);
         xhr.send();
