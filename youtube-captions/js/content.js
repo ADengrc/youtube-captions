@@ -9,7 +9,7 @@ chrome.storage.sync.get('open', storage => {
                 return script;
             }
 
-            injectJs(xHook).onload = () => {
+            injectJs(xHook).onload = function () {
                 this.onload = null;
                 injectJs(chrome.extension.getURL('js/injected.js'));
             };
