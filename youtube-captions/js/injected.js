@@ -1,10 +1,30 @@
 xhook.after(function (request, response) {
-    if (request.url.includes('/api/timedtext') && !request.url.includes('&tlang=')) {
-        let xhr = new XMLHttpRequest();
-        xhr.open('GET', `${request.url}&tlang=zh-Hans`, false);
-        xhr.send();
+    let url = request.url
+    if (url.includes('/api/timedtext')) {
+        const zhReg = /^zh-\w+/
+        const params = new URLSearchParams(url)
+        let lang = (params.get('lang') || '').toLocaleLowerCase()
+        let tlang = (params.get('tlang') || '').toLocaleLowerCase()
+        
+        if (!zhReg.test(lang) && !zhReg.test(tlang)) {
+            let userLang
+            try {
+                JSON.parse(ytplayer.config.args.player_response).captions.playerCaptionsTracklistRenderer.captionTracks.forEach(lang => {
+                    lang.languageCode = lang.languageCode.toLocaleLowerCase()
+                    if (userLang && userLang.languageCode == 'zh-cn') return
+                    if (zhReg.test(lang.languageCode)) {
+                        lang.baseUrl += '&fmt=srv3'
+                        userLang = lang
+                    }
+                })
+            } catch (error) {
+                console.log(error)
+            }
 
-        if (response.xml.querySelector('head pen')) {
+            let xhr = new XMLHttpRequest();
+            xhr.open('GET', userLang ? userLang.baseUrl : `${url}&tlang=zh-Hans`, false);
+            xhr.send();
+
             xhr.responseXML.querySelectorAll('p').forEach(e => {
                 let p = response.xml.querySelector(`p[t='${e.getAttribute('t')}']`);
                 if (p) {
@@ -16,11 +36,8 @@ xhook.after(function (request, response) {
                     e.textContent = [p.textContent.replace('\n', ' '), e.textContent.replace('\n', ' ')].join('\n');
                 }
             });
-        } else {
-            xhr.responseXML.querySelector('body').innerHTML = response.xml.querySelector('body').innerHTML.replace(/\n/g, ' ') +
-                xhr.responseXML.querySelector('body').innerHTML.replace(/\n/g, ' ');
-        }
 
-        response.text = new XMLSerializer().serializeToString(xhr.responseXML);
+            response.text = new XMLSerializer().serializeToString(xhr.responseXML);
+        }
     }
 });
