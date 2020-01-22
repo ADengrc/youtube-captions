@@ -1,7 +1,7 @@
 {
   "name": "YouTube™双字幕",
   "manifest_version": 2,
-  "version": "1.3",
+  "version": "1.4",
   "description": "点击一下即可开启中英双字幕,适用于YouTube™",
   "author": "Dengrc",
   "permissions": [

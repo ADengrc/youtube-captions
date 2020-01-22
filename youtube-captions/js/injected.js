@@ -49,13 +49,13 @@ let getResult = function(response, map) {
   return JSON.stringify(resJson);
 };
 
-let injectedStyle = function() {
-  let style = document.createElement("style");
-  style.innerText =
-    ".caption-window.ytp-caption-window-bottom{transform:scale(2) translateY(-30%)}";
-  document.head.appendChild(style);
-};
-injectedStyle();
+// let injectedStyle = function() {
+//   let style = document.createElement("style");
+//   style.innerText =
+//     ".caption-window.ytp-caption-window-bottom{transform:scale(2) translateY(-30%)}";
+//   document.head.appendChild(style);
+// };
+// injectedStyle();
 
 xhook.after(function(request, response) {
   let url = request.url;
