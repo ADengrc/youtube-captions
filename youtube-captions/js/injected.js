@@ -1,4 +1,4 @@
-let mergerSegs = function(segs, event, map) {
+const mergerSegs = function(segs, event, map) {
   if (segs) {
     let utf8 = segs.map(seg => seg.utf8).join("");
     let val = map && map.get(`${event.tStartMs}_${event.dDurationMs}`);
@@ -19,7 +19,7 @@ let mergerSegs = function(segs, event, map) {
   }
 };
 
-let setMap = function(userLang, url) {
+const setMap = function(userLang, url) {
   let xhr = new XMLHttpRequest();
   xhr.open("GET", userLang ? userLang.baseUrl : `${url}&tlang=zh-Hans`, false);
   xhr.send();
@@ -32,10 +32,48 @@ let setMap = function(userLang, url) {
   return map;
 };
 
+const processEvents = function(events) {
+  let map = new Map();
+  let pre = null;
+  events.forEach(e => {
+    if (e.segs && e.segs.length > 0) {
+      if (!pre) pre = e;
+      if (!e.aAppend && e.tStartMs >= pre.tStartMs + pre.dDurationMs) {
+        pre = e;
+      }
+      e.segs = [{ utf8: e.segs.map(seg => seg.utf8).join("") }];
+      let cc = map.get(pre.tStartMs);
+      if (!cc) {
+        cc = [];
+      }
+      cc.push(e);
+      map.set(pre.tStartMs, cc);
+    }
+  });
+  events = [];
+  map.forEach(e => {
+    events.push(
+      Object.assign({}, e[0], {
+        segs: [
+          {
+            utf8: e
+              .map(c => c.segs[0].utf8)
+              .join("")
+              .replace(/\n/g, " ")
+          }
+        ]
+      })
+    );
+  });
+  return events;
+};
+
 let getResult = function(response, map) {
   let resJson = JSON.parse(response.text);
+  resJson.events = processEvents(resJson.events);
   let events = [];
   resJson.events.forEach(function(event) {
+    delete event.wWinId;
     if (
       !(event.segs && event.segs.length === 1 && event.segs[0].utf8 === "\n")
     ) {

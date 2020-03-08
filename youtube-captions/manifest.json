@@ -1,13 +1,10 @@
 {
   "name": "YouTube™双字幕",
   "manifest_version": 2,
-  "version": "1.4",
+  "version": "1.4.1",
   "description": "点击一下即可开启中英双字幕,适用于YouTube™",
   "author": "Dengrc",
-  "permissions": [
-    "tabs",
-    "storage"
-  ],
+  "permissions": ["tabs", "storage"],
   "icons": {
     "128": "images/icon128.png"
   },
@@ -16,24 +13,15 @@
   },
   "content_scripts": [
     {
-      "matches": [
-        "https://*/*"
-      ],
-      "js": [
-        "js/content.js"
-      ],
+      "matches": ["https://*/*"],
+      "js": ["js/content.js"],
       "run_at": "document_start",
       "all_frames": true
     }
   ],
   "background": {
-    "scripts": [
-      "js/background.js"
-    ],
+    "scripts": ["js/background.js"],
     "persistent": false
   },
-  "web_accessible_resources": [
-    "js/injected.js",
-    "js/xhook.min.js"
-  ]
+  "web_accessible_resources": ["js/injected.js", "js/xhook.min.js"]
 }
