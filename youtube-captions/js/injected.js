@@ -1,30 +1,31 @@
-const mergerSegs = function(segs, event, map) {
+window.fetch = xhook.fetch;
+const mergerSegs = function (segs, event, map) {
   if (segs) {
-    let utf8 = segs.map(seg => seg.utf8).join("");
+    let utf8 = segs.map((seg) => seg.utf8).join('');
     let val = map && map.get(`${event.tStartMs}_${event.dDurationMs}`);
     if (val) {
       utf8 = `${utf8}\n${val[0].utf8}`;
     }
     return [
       {
-        utf8
-      }
+        utf8,
+      },
     ];
   } else {
     return [
       {
-        utf8: ""
-      }
+        utf8: '',
+      },
     ];
   }
 };
 
-const setMap = function(userLang, url) {
+const setMap = function (userLang, url) {
   let xhr = new XMLHttpRequest();
-  xhr.open("GET", userLang ? userLang.baseUrl : `${url}&tlang=zh-Hans`, false);
+  xhr.open('GET', userLang ? userLang.baseUrl : `${url}&tlang=zh-Hans`, false);
   xhr.send();
   let map = new Map();
-  JSON.parse(xhr.response).events.forEach(event => {
+  JSON.parse(xhr.response).events.forEach((event) => {
     if (event.segs) {
       map.set(`${event.tStartMs}_${event.dDurationMs}`, mergerSegs(event.segs));
     }
@@ -32,16 +33,16 @@ const setMap = function(userLang, url) {
   return map;
 };
 
-const processEvents = function(events) {
+const processEvents = function (events) {
   let map = new Map();
   let pre = null;
-  events.forEach(e => {
+  events.forEach((e) => {
     if (e.segs && e.segs.length > 0) {
       if (!pre) pre = e;
       if (!e.aAppend && e.tStartMs >= pre.tStartMs + pre.dDurationMs) {
         pre = e;
       }
-      e.segs = [{ utf8: e.segs.map(seg => seg.utf8).join("") }];
+      e.segs = [{ utf8: e.segs.map((seg) => seg.utf8).join('') }];
       let cc = map.get(pre.tStartMs);
       if (!cc) {
         cc = [];
@@ -51,31 +52,31 @@ const processEvents = function(events) {
     }
   });
   events = [];
-  map.forEach(e => {
+  map.forEach((e) => {
     events.push(
       Object.assign({}, e[0], {
         segs: [
           {
             utf8: e
-              .map(c => c.segs[0].utf8)
-              .join("")
-              .replace(/\n/g, " ")
-          }
-        ]
+              .map((c) => c.segs[0].utf8)
+              .join('')
+              .replace(/\n/g, ' '),
+          },
+        ],
       })
     );
   });
   return events;
 };
 
-let getResult = function(response, map) {
+let getResult = function (response, map) {
   let resJson = JSON.parse(response.text);
   resJson.events = processEvents(resJson.events);
   let events = [];
-  resJson.events.forEach(function(event) {
+  resJson.events.forEach(function (event) {
     delete event.wWinId;
     if (
-      !(event.segs && event.segs.length === 1 && event.segs[0].utf8 === "\n")
+      !(event.segs && event.segs.length === 1 && event.segs[0].utf8 === '\n')
     ) {
       if (event && event.segs) {
         event.segs = mergerSegs(event.segs, event, map);
@@ -95,13 +96,13 @@ let getResult = function(response, map) {
 // };
 // injectedStyle();
 
-xhook.after(function(request, response) {
+xhook.after(function (request, response) {
   let url = request.url;
-  if (url.includes("/api/timedtext")) {
+  if (url.includes('/api/timedtext')) {
     const zhReg = /^zh-\w+/;
     const params = new URLSearchParams(url);
-    let lang = (params.get("lang") || "").toLocaleLowerCase();
-    let tlang = (params.get("tlang") || "").toLocaleLowerCase();
+    let lang = (params.get('lang') || '').toLocaleLowerCase();
+    let tlang = (params.get('tlang') || '').toLocaleLowerCase();
 
     if (!zhReg.test(lang) && !zhReg.test(tlang)) {
       let userLang;
@@ -109,11 +110,11 @@ xhook.after(function(request, response) {
         JSON.parse(
           ytplayer.config.args.player_response
         ).captions.playerCaptionsTracklistRenderer.captionTracks.forEach(
-          lang => {
+          (lang) => {
             lang.languageCode = lang.languageCode.toLocaleLowerCase();
-            if (userLang && userLang.languageCode == "zh-cn") return;
+            if (userLang && userLang.languageCode == 'zh-cn') return;
             if (zhReg.test(lang.languageCode)) {
-              lang.baseUrl += "&fmt=srv3";
+              lang.baseUrl += '&fmt=srv3';
               userLang = lang;
             }
           }
