@@ -4,7 +4,7 @@ const mergerSegs = function (segs, event, map) {
     let utf8 = segs.map((seg) => seg.utf8).join('');
     let val = map && map.get(`${event.tStartMs}_${event.dDurationMs}`);
     if (val) {
-      utf8 = `${utf8}\n${val[0].utf8}`;
+      utf8 = `${val[0].utf8}\n${utf8}`;
     }
     return [
       {
