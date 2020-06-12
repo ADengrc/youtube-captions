@@ -1,7 +1,7 @@
 window.fetch = xhook.fetch;
 const mergerSegs = function (segs, event, map) {
   if (segs) {
-    let utf8 = segs.map((seg) => seg.utf8).join('');
+    let utf8 = segs.map((seg) => seg.utf8).join("");
     let val = map && map.get(`${event.tStartMs}_${event.dDurationMs}`);
     if (val) {
       utf8 = `${val[0].utf8}\n${utf8}`;
@@ -14,7 +14,7 @@ const mergerSegs = function (segs, event, map) {
   } else {
     return [
       {
-        utf8: '',
+        utf8: "",
       },
     ];
   }
@@ -22,7 +22,7 @@ const mergerSegs = function (segs, event, map) {
 
 const setMap = function (userLang, url) {
   let xhr = new XMLHttpRequest();
-  xhr.open('GET', userLang ? userLang.baseUrl : `${url}&tlang=zh-Hans`, false);
+  xhr.open("GET", userLang ? userLang.baseUrl : `${url}&tlang=zh-Hans`, false);
   xhr.send();
   let map = new Map();
   JSON.parse(xhr.response).events.forEach((event) => {
@@ -42,7 +42,7 @@ const processEvents = function (events) {
       if (!e.aAppend && e.tStartMs >= pre.tStartMs + pre.dDurationMs) {
         pre = e;
       }
-      e.segs = [{ utf8: e.segs.map((seg) => seg.utf8).join('') }];
+      e.segs = [{ utf8: e.segs.map((seg) => seg.utf8).join("") }];
       let cc = map.get(pre.tStartMs);
       if (!cc) {
         cc = [];
@@ -59,8 +59,8 @@ const processEvents = function (events) {
           {
             utf8: e
               .map((c) => c.segs[0].utf8)
-              .join('')
-              .replace(/\n/g, ' '),
+              .join("")
+              .replace(/\n/g, " "),
           },
         ],
       })
@@ -76,7 +76,7 @@ let getResult = function (response, map) {
   resJson.events.forEach(function (event) {
     delete event.wWinId;
     if (
-      !(event.segs && event.segs.length === 1 && event.segs[0].utf8 === '\n')
+      !(event.segs && event.segs.length === 1 && event.segs[0].utf8 === "\n")
     ) {
       if (event && event.segs) {
         event.segs = mergerSegs(event.segs, event, map);
@@ -98,11 +98,11 @@ let getResult = function (response, map) {
 
 xhook.after(function (request, response) {
   let url = request.url;
-  if (url.includes('/api/timedtext')) {
+  if (url.includes("/api/timedtext")) {
     const zhReg = /^zh-\w+/;
     const params = new URLSearchParams(url);
-    let lang = (params.get('lang') || '').toLocaleLowerCase();
-    let tlang = (params.get('tlang') || '').toLocaleLowerCase();
+    let lang = (params.get("lang") || "").toLocaleLowerCase();
+    let tlang = (params.get("tlang") || "").toLocaleLowerCase();
 
     if (!zhReg.test(lang) && !zhReg.test(tlang)) {
       let userLang;
@@ -112,9 +112,9 @@ xhook.after(function (request, response) {
         ).captions.playerCaptionsTracklistRenderer.captionTracks.forEach(
           (lang) => {
             lang.languageCode = lang.languageCode.toLocaleLowerCase();
-            if (userLang && userLang.languageCode == 'zh-cn') return;
+            if (userLang && userLang.languageCode == "zh-cn") return;
             if (zhReg.test(lang.languageCode)) {
-              lang.baseUrl += '&fmt=srv3';
+              lang.baseUrl += "&fmt=json3";
               userLang = lang;
             }
           }
